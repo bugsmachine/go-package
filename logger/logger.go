@@ -10,6 +10,10 @@ import (
 type Logger struct {
 }
 
+func Default() Logger {
+	return Logger{}
+}
+
 func (l Logger) Print(logType string, message string) {
 	_, file, line, ok := runtime.Caller(1)
 	if !ok {
