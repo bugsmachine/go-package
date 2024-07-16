@@ -1,6 +1,6 @@
 package main
 
-import "github.com/bugsmachine/go-logger/logger"
+import "github.com/bugsmachine/go-package/logger"
 
 func main() {
 
