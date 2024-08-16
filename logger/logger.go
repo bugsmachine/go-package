@@ -8,148 +8,128 @@ import (
 )
 
 type Logger struct {
+	Mode string
 }
 
-var Log = Logger{}
+var Log = Logger{
+	Mode: "debug",
+}
 
 func Default() Logger {
-	return Logger{}
+	return Logger{
+		Mode: "debug",
+	}
 }
 
-func (l Logger) Info(message string) {
-	_, file, line, ok := runtime.Caller(1)
-	if !ok {
-		fmt.Println("Error retrieving caller info")
-		return
-	}
-
-	colorCode := "\033[32m" // Green
-	logType := "INFO"
-	logType = "[" + logType + "]"
-	shortFile := filepath.Base(file) // Get the short form of the file name
-	currentTime := time.Now().Format("2006-01-02 15:04:05")
-	fmt.Printf("%s %s%s\033[0m: %s (%s %d)\n", currentTime, colorCode, logType, message, shortFile, line)
+func (l *Logger) Release() {
+	l.Mode = "release"
 }
 
-func Info(message string) {
-	_, file, line, ok := runtime.Caller(1)
-	if !ok {
-		fmt.Println("Error retrieving caller info")
-		return
-	}
-
-	colorCode := "\033[32m" // Green
-	logType := "INFO"
-	logType = "[" + logType + "]"
-	shortFile := filepath.Base(file) // Get the short form of the file name
-	currentTime := time.Now().Format("2006-01-02 15:04:05")
-	fmt.Printf("%s %s%s\033[0m: %s (%s %d)\n", currentTime, colorCode, logType, message, shortFile, line)
+func (l *Logger) Debug() {
+	l.Mode = "debug"
 }
 
-func (l Logger) Print(logType string, message string) {
-	_, file, line, ok := runtime.Caller(1)
-	if !ok {
-		fmt.Println("Error retrieving caller info")
-		return
+func checkMode(l Logger) bool {
+	if l.Mode == "debug" {
+		return true
+	} else {
+		return false
 	}
-
-	// Determine the color based on logType
-	var colorCode string
-	switch logType {
-	case "ERROR":
-		colorCode = "\033[31m" // Red
-	case "WARNING":
-		colorCode = "\033[33m" // Yellow
-	default:
-		colorCode = "\033[0m" // Default
-	}
-
-	logType = "[" + logType + "]"
-	shortFile := filepath.Base(file) // Get the short form of the file name
-	currentTime := time.Now().Format("2006-01-02 15:04:05")
-	fmt.Printf("%s %s%s\033[0m: %s (%s %d)\n", currentTime, colorCode, logType, message, shortFile, line)
 }
 
-func Print(logType string, message string) {
-	_, file, line, ok := runtime.Caller(1)
-	if !ok {
-		fmt.Println("Error retrieving caller info")
-		return
-	}
+func (l *Logger) Info(message string, variables ...interface{}) {
+	if l.Mode == "debug" {
+		_, file, line, ok := runtime.Caller(1)
+		if !ok {
+			fmt.Println("Error retrieving caller info")
+			return
+		}
 
-	// Determine the color based on logType
-	var colorCode string
-	switch logType {
-	case "ERROR":
-		colorCode = "\033[31m" // Red
-	case "WARNING":
-		colorCode = "\033[33m" // Yellow
-	default:
-		colorCode = "\033[0m" // Default
-	}
+		colorCode := "\033[32m" // Green
+		logType := "INFO"
+		logType = "[" + logType + "]"
+		shortFile := filepath.Base(file) // Get the short form of the file name
+		currentTime := time.Now().Format("2006-01-02 15:04:05")
 
-	logType = "[" + logType + "]"
-	shortFile := filepath.Base(file) // Get the short form of the file name
-	currentTime := time.Now().Format("2006-01-02 15:04:05")
-	fmt.Printf("%s %s%s\033[0m: %s (%s %d)\n", currentTime, colorCode, logType, message, shortFile, line)
+		if len(variables) > 0 {
+			message = fmt.Sprintf(message, variables...)
+		}
+
+		fmt.Printf("%s %s%s\033[0m: %s (%s %d)\n", currentTime, colorCode, logType, message, shortFile, line)
+	}
 }
 
-func Warning(message string) {
-	_, file, line, ok := runtime.Caller(1)
-	if !ok {
-		fmt.Println("Error retrieving caller info")
-		return
-	}
+func (l *Logger) Print(logType string, message string, variables ...interface{}) {
+	if l.Mode == "debug" {
+		_, file, line, ok := runtime.Caller(1)
+		if !ok {
+			fmt.Println("Error retrieving caller info")
+			return
+		}
 
-	colorCode := "\033[33m" // Yellow
-	logType := "WARNING"
-	logType = "[" + logType + "]"
-	shortFile := filepath.Base(file) // Get the short form of the file name
-	currentTime := time.Now().Format("2006-01-02 15:04:05")
-	fmt.Printf("%s %s%s\033[0m: %s (%s %d)\n", currentTime, colorCode, logType, message, shortFile, line)
+		// Determine the color based on logType
+		var colorCode string
+		switch logType {
+		case "ERROR":
+			colorCode = "\033[31m" // Red
+		case "WARNING":
+			colorCode = "\033[33m" // Yellow
+		default:
+			colorCode = "\033[0m" // Default
+		}
+
+		logType = "[" + logType + "]"
+		shortFile := filepath.Base(file) // Get the short form of the file name
+		currentTime := time.Now().Format("2006-01-02 15:04:05")
+
+		if len(variables) > 0 {
+			message = fmt.Sprintf(message, variables...)
+		}
+
+		fmt.Printf("%s %s%s\033[0m: %s (%s %d)\n", currentTime, colorCode, logType, message, shortFile, line)
+	}
 }
 
-func (l Logger) Warning(message string) {
-	_, file, line, ok := runtime.Caller(1)
-	if !ok {
-		fmt.Println("Error retrieving caller info")
-		return
-	}
+func (l *Logger) Warning(message string, variables ...interface{}) {
+	if l.Mode == "debug" {
+		_, file, line, ok := runtime.Caller(1)
+		if !ok {
+			fmt.Println("Error retrieving caller info")
+			return
+		}
 
-	colorCode := "\033[33m" // Yellow
-	logType := "WARNING"
-	logType = "[" + logType + "]"
-	shortFile := filepath.Base(file) // Get the short form of the file name
-	currentTime := time.Now().Format("2006-01-02 15:04:05")
-	fmt.Printf("%s %s%s\033[0m: %s (%s %d)\n", currentTime, colorCode, logType, message, shortFile, line)
+		colorCode := "\033[33m" // Yellow
+		logType := "WARNING"
+		logType = "[" + logType + "]"
+		shortFile := filepath.Base(file) // Get the short form of the file name
+		currentTime := time.Now().Format("2006-01-02 15:04:05")
+
+		if len(variables) > 0 {
+			message = fmt.Sprintf(message, variables...)
+		}
+
+		fmt.Printf("%s %s%s\033[0m: %s (%s %d)\n", currentTime, colorCode, logType, message, shortFile, line)
+	}
 }
 
-func Error(message string) {
-	_, file, line, ok := runtime.Caller(1)
-	if !ok {
-		fmt.Println("Error retrieving caller info")
-		return
+func (l *Logger) Error(message string, variables ...interface{}) {
+	if l.Mode == "debug" {
+		_, file, line, ok := runtime.Caller(1)
+		if !ok {
+			fmt.Println("Error retrieving caller info")
+			return
+		}
+
+		colorCode := "\033[31m" // Red
+		logType := "ERROR"
+		logType = "[" + logType + "]"
+		shortFile := filepath.Base(file) // Get the short form of the file name
+		currentTime := time.Now().Format("2006-01-02 15:04:05")
+
+		if len(variables) > 0 {
+			message = fmt.Sprintf(message, variables...)
+		}
+
+		fmt.Printf("%s %s%s\033[0m: %s (%s %d)\n", currentTime, colorCode, logType, message, shortFile, line)
 	}
-
-	colorCode := "\033[31m" // Red
-	logType := "ERROR"
-	logType = "[" + logType + "]"
-	shortFile := filepath.Base(file) // Get the short form of the file name
-	currentTime := time.Now().Format("2006-01-02 15:04:05")
-	fmt.Printf("%s %s%s\033[0m: %s (%s %d)\n", currentTime, colorCode, logType, message, shortFile, line)
-}
-
-func (l Logger) Error(message string) {
-	_, file, line, ok := runtime.Caller(1)
-	if !ok {
-		fmt.Println("Error retrieving caller info")
-		return
-	}
-
-	colorCode := "\033[31m" // Red
-	logType := "ERROR"
-	logType = "[" + logType + "]"
-	shortFile := filepath.Base(file) // Get the short form of the file name
-	currentTime := time.Now().Format("2006-01-02 15:04:05")
-	fmt.Printf("%s %s%s\033[0m: %s (%s %d)\n", currentTime, colorCode, logType, message, shortFile, line)
 }
