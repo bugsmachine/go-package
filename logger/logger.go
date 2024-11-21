@@ -21,6 +21,12 @@ func Default() Logger {
 	}
 }
 
+func Release() Logger {
+	return Logger{
+		Mode: "release",
+	}
+}
+
 func (l *Logger) Release() {
 	l.Mode = "release"
 }
@@ -113,23 +119,23 @@ func (l *Logger) Warning(message string, variables ...interface{}) {
 }
 
 func (l *Logger) Error(message string, variables ...interface{}) {
-	if l.Mode == "debug" {
-		_, file, line, ok := runtime.Caller(1)
-		if !ok {
-			fmt.Println("Error retrieving caller info")
-			return
-		}
 
-		colorCode := "\033[31m" // Red
-		logType := "ERROR"
-		logType = "[" + logType + "]"
-		shortFile := filepath.Base(file) // Get the short form of the file name
-		currentTime := time.Now().Format("2006-01-02 15:04:05")
-
-		if len(variables) > 0 {
-			message = fmt.Sprintf(message, variables...)
-		}
-
-		fmt.Printf("%s %s%s\033[0m: %s (%s %d)\n", currentTime, colorCode, logType, message, shortFile, line)
+	_, file, line, ok := runtime.Caller(1)
+	if !ok {
+		fmt.Println("Error retrieving caller info")
+		return
 	}
+
+	colorCode := "\033[31m" // Red
+	logType := "ERROR"
+	logType = "[" + logType + "]"
+	shortFile := filepath.Base(file) // Get the short form of the file name
+	currentTime := time.Now().Format("2006-01-02 15:04:05")
+
+	if len(variables) > 0 {
+		message = fmt.Sprintf(message, variables...)
+	}
+
+	fmt.Printf("%s %s%s\033[0m: %s (%s %d)\n", currentTime, colorCode, logType, message, shortFile, line)
+	
 }

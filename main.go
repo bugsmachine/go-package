@@ -10,7 +10,7 @@ func main() {
 
 	//test
 
-	var log = logger.Default()
+	var log = logger.Release()
 	//log.Release()
 	fmt.Println(log.Mode)
 	log.Info("This is an info message")
